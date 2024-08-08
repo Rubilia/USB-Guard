@@ -11,7 +11,7 @@ int main() {
         return -1;
     }
 
-    char data[512] = "Hello, USB Encryption Layer!";
+    char data[512] = "Testing encryption layer!";
     ioctl(fd, IOCTL_WRITE, data);
     
     close(fd);

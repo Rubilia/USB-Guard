@@ -13,7 +13,7 @@ int main() {
 
     char buffer[512];
     ioctl(fd, IOCTL_READ, buffer);
-    printf("Read data: %s\n", buffer);
+    printf("Encrypted data: %s\n", buffer);
     
     close(fd);
     return 0;
