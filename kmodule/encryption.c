@@ -20,6 +20,7 @@ int aes_encrypt(const u8 *plaintext, u8 *ciphertext, const u8 *key, const u8 *iv
         return -EFAULT;
     }
 
+    skcipher_request_free(req);
     return 0;
 }
 
@@ -37,5 +38,6 @@ int aes_decrypt(const u8 *ciphertext, u8 *plaintext, const u8 *key, const u8 *iv
         return -EFAULT;
     }
 
+    skcipher_request_free(req);
     return 0;
 }
