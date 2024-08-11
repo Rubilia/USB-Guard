@@ -20,8 +20,10 @@ int derive_key_from_password(const char *password, size_t password_len, u8 *salt
     ret = pbkdf2(tfm, password, password_len, salt, 16, 10000, derived_key, key_len);
     if (ret) {
         printk(KERN_ERR "USB Encryption Layer: PBKDF2 key derivation failed\n");
+    } else {
+        printk(KERN_INFO "USB Encryption Layer: PBKDF2 key derivation successful\n");
     }
-    
+
     crypto_free_shash(tfm);
     return ret;
 }
