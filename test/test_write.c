@@ -11,8 +11,10 @@ int main() {
         return -1;
     }
 
-    char data[512] = "Testing encryption layer!";
+    char data[512] = "Testing partial block write";
+    unsigned int partial_size = 100;  // Writing only 100 bytes
     ioctl(fd, IOCTL_WRITE, data);
+    ioctl(fd, IOCTL_WRITE, &partial_size);
     
     close(fd);
     return 0;
