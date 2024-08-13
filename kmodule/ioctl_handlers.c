@@ -10,8 +10,6 @@
 static long usb_encryption_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
     char buffer[512];
     char password[64];
-    unsigned int partial_size;
-    sector_t sector = 0;
     u8 derived_key[32];
     u8 iv[16];
 
@@ -26,28 +24,24 @@ static long usb_encryption_ioctl(struct file *file, unsigned int cmd, unsigned l
 
     switch (cmd) {
         case IOCTL_READ:
-            generate_iv(sector, derived_key, iv);
+            memset(buffer, 0, sizeof(buffer)); // Initialize buffer to avoid garbage data
+            generate_iv(0, derived_key, iv);
             aes_decrypt(buffer, buffer, derived_key, iv);
-            if (usb_bio_read(NULL, sector, buffer) == 0) {
+            if (usb_bio_read(NULL, 0, buffer) == 0) {
                 printk(KERN_INFO "USB Encryption Layer: IOCTL_READ successful\n");
             }
             break;
         case IOCTL_WRITE:
-            // Handle partial block write
-            if (copy_from_user(&partial_size, (unsigned int __user *)arg + 64, sizeof(unsigned int))) {
-                return -EFAULT;
-            }
-            if (partial_size < 512) {
-                memset(buffer + partial_size, 0, 512 - partial_size); // Zero-fill remaining block
-            }
-            generate_iv(sector, derived_key, iv);
+            memset(buffer, 0, sizeof(buffer)); // Clear buffer before writing
+            generate_iv(0, derived_key, iv);
             aes_encrypt(buffer, buffer, derived_key, iv);
-            if (usb_bio_write(NULL, sector, buffer) == 0) {
-                printk(KERN_INFO "USB Encryption Layer: IOCTL_WRITE successful (partial block)\n");
+            if (usb_bio_write(NULL, 0, buffer) == 0) {
+                printk(KERN_INFO "USB Encryption Layer: IOCTL_WRITE successful\n");
             }
             break;
         default:
             return -EINVAL;
     }
+
     return 0;
 }
