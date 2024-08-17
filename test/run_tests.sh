@@ -1,9 +1,11 @@
 #!/bin/bash
 
-echo "Running all USB Encryption Layer tests..."
+LOG_FILE="test_results.log"
 
-./test_write
-./test_read
-./test_error_handling
+echo "Running all USB Encryption Layer tests..." | tee -a $LOG_FILE
 
-echo "Tests completed."
+./test_write 2>&1 | tee -a $LOG_FILE
+./test_read 2>&1 | tee -a $LOG_FILE
+./test_error_handling 2>&1 | tee -a $LOG_FILE
+
+echo "Tests completed. Results saved to $LOG_FILE" | tee -a $LOG_FILE
