@@ -7,6 +7,7 @@
 #include "iv.h"
 #include "encryption.h"
 
+// Added final review comments and cleaned up code for ioctl handling
 static long usb_encryption_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
     char buffer[512];
     char password[64];
@@ -24,7 +25,7 @@ static long usb_encryption_ioctl(struct file *file, unsigned int cmd, unsigned l
 
     switch (cmd) {
         case IOCTL_READ:
-            memset(buffer, 0, sizeof(buffer)); // Initialize buffer to avoid garbage data
+            memset(buffer, 0, sizeof(buffer));
             generate_iv(0, derived_key, iv);
             aes_decrypt(buffer, buffer, derived_key, iv);
             if (usb_bio_read(NULL, 0, buffer) == 0) {
@@ -32,7 +33,7 @@ static long usb_encryption_ioctl(struct file *file, unsigned int cmd, unsigned l
             }
             break;
         case IOCTL_WRITE:
-            memset(buffer, 0, sizeof(buffer)); // Clear buffer before writing
+            memset(buffer, 0, sizeof(buffer));
             generate_iv(0, derived_key, iv);
             aes_encrypt(buffer, buffer, derived_key, iv);
             if (usb_bio_write(NULL, 0, buffer) == 0) {
